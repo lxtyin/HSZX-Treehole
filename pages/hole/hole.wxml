@@ -1,0 +1,30 @@
+<!--pages/hole/hole.wxml-->
+<view class="hole_title">
+  <text> H </text>
+  <text style="color: rgb(0, 0, 0);"> O </text>
+  <text> L </text>
+  <text> E </text>
+</view>
+<view class="paster" wx:for="{{list}}">
+  <view class="head_bar">
+    <text class="title"> {{item.title}} </text>
+    <text wx:if="{{item.tags.length > 0}}" class="tag"> #{{item.tags}} </text>
+  </view>
+  <view class="content_bar">
+    <text class="content"> {{item.content}} </text>
+  </view>
+  <view class="bottom_bar">
+    <view class="time_bar">
+      <text class="time"> {{item.time_statement}} </text>
+    </view>
+    <view class="icon_bar">
+      <view class="icon">
+        <icon class="iconfont icon-like"></icon>
+      </view>
+      <view class="icon">
+        <icon class="iconfont icon-comment"></icon>
+      </view>
+    </view>
+  </view>
+</view>
+
