@@ -1,0 +1,117 @@
+<!--pages/post/post.wxml-->
+
+<!-- 页面 -->
+<view class="container" bindtap="fold_1">
+  <view class="head_bar">
+    <text class="title"> {{title}} </text>
+    <text wx:if="{{tags.length > 0}}" class="tag"> #{{tags}} </text>
+  </view>
+  <view class="time_bar">
+      <text class="time"> {{time_statement}} </text>
+  </view>
+  <view class="content_bar">
+    <text user-select="true" class="content"> {{content}} </text>
+  </view>
+  <view class="image_bar">
+    <image wx:for="{{imgs}}" src="{{item}}" mode="widthFix"></image>
+  </view>
+  <view style="height: 100px;"></view>
+</view>
+
+<!-- 底部栏 -->
+<view class="bottom_bar" wx:if="{{fold_comment}}">
+  <view class="icon_button">
+    <icon class="iconfont icon-star" wx:if="{{!starred}}"></icon>
+    <icon class="iconfont icon-starred" wx:if="{{starred}}"></icon>
+    <text> {{star_num}} </text>
+  </view>
+  <view class="icon_button">
+    <icon class="iconfont icon-like" wx:if="{{!upvoted}}" bindtap="upvote_post"></icon>
+    <icon class="iconfont icon-liked" wx:if="{{upvoted}}"></icon>
+    <text> {{upvote_num}} </text>
+  </view>
+  <view class="icon_button" catchtap="unfold_1">
+    <icon class="iconfont icon-comment"></icon>
+    <text> {{comment_num}} </text>
+  </view>
+</view>
+
+<!-- 评论区展开 -->
+<view class="fold_area" wx:if="{{!fold_comment}}">
+  <view class="fold_button" bindtap="fold_1"><text style="color: black;">v 收起评论区 v</text></view>
+  <scroll-view scroll-y="true" class="comment_area">
+    <view class="comment" wx:for="{{comment_1}}">
+      <view class="head_bar">
+        <image class="avatar" mode="aspectFill" src="{{item.user.avatar}}"></image>
+        <view class="head-r">
+          <text class="user_name">{{item.user.name}}</text>
+          <text class="time">{{item.time_statement}}</text>
+        </view>
+      </view>
+      <view class="content_bar">
+        <text class="content" user-select="true">{{item.content}}</text>
+      </view>
+      <view class="info_bar">
+        <view class="com23_button" bindtap="unfold_23" data-idx="{{index}}"
+         wx:if="{{item.comment_num > 0 && item.fold_comment}}">
+          <text> :) 展开{{item.comment_num}}条回复</text>
+        </view>
+        <view class="com23_button" bindtap="fold_23" data-idx="{{index}}"
+         wx:if="{{item.comment_num > 0 && !item.fold_comment}}">
+          <text> :( 收起回复</text>
+        </view>
+        <view wx:if="{{item.comment_num<=0}}"></view>
+        <view class="icon_bar">
+          <view class="icon">
+            <icon class="iconfont icon-like" wx:if="{{!item.upvoted}}"></icon>
+            <icon class="iconfont icon-liked" wx:if="{{item.upvoted}}"></icon>
+            <text> {{item.upvote_num}} </text>
+          </view>
+          <view class="icon">
+            <icon class="iconfont icon-comment" bindtap="set_reply"
+               data-target="{{item}}" data-fid="{{item._id}}"></icon>
+          </view>
+        </view>
+      </view>
+
+      <view class="comment_23" wx:if="{{!item.fold_comment}}"
+       wx:for-item="item23" wx:for="{{item.comment_23}}">
+        <view class="head_bar">
+          <image class="avatar" mode="aspectFill" src="{{item23.user.avatar}}"></image>
+          <view class="head-r">
+            <text class="user_name" wx:if="{{item23.level==2}}">{{item23.user.name}}</text>
+            <text class="user_name" wx:if="{{item23.level==3}}">{{item23.user.name}} > {{item23.reply_name}}</text>
+            <text class="time">{{item23.time_statement}}</text>
+          </view>
+        </view>
+        <view class="content_bar">
+          <text class="content" user-select="true">{{item23.content}}</text>
+        </view>
+        <view class="info_bar">
+          <view></view>
+          <view class="icon_bar">
+            <view class="icon">
+              <icon class="iconfont icon-like" wx:if="{{!item23.upvoted}}"></icon>
+              <icon class="iconfont icon-liked" wx:if="{{item23.upvoted}}"></icon>
+              <text> {{item23.upvote_num}} </text>
+            </view>
+            <view class="icon">
+              <icon class="iconfont icon-comment" bindtap="set_reply"
+               data-target="{{item23}}" data-fid="{{item._id}}"></icon>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="empty_hint"><text>---到底了---</text></view>
+  </scroll-view> 
+
+  <view class="reply_area"> 
+    <view class="input">
+      <textarea auto-height="true" value="{{reply.content}}" placeholder="{{reply.holder}}" bindinput="input_reply" focus="{{focus_reply}}" bindfocus="focus" bindblur="unfocus"/>
+    </view>
+    <view class="send_button" bindtap="send_comment">
+      <text>发送</text>
+    </view>
+  </view>
+</view>

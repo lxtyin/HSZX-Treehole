@@ -1,7 +1,8 @@
 // pages/hole/hole.js
 
 const app = getApp();
-const time = require("../../utils/time")
+const db = wx.cloud.database();
+const util = require("../../utils/util")
 
 Page({
 
@@ -9,43 +10,32 @@ Page({
    * 页面的初始数据
    */
   data: {
-    list: [
-      {
-        title: "2022 年卡塔尔世界杯半决赛阿根廷 vs 克罗地亚，本场比赛有哪些看点？",
-        post_time: new Date(),
-        time_statement: "",
-        content: "内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
-        tags: ["新闻"]
-      },
-      {
-        title: "标题",
-        post_time: new Date(),
-        time_statement: "",
-        content: "内容 yeah yeah yeah",
-        tags: ["情感"]
-      },
-      {
-        title: "标题",
-        post_time: new Date(""),
-        time_statement: "",
-        content: "内容 yeah yeah yeah",
-        tags: []
-      }
-    ]
+    list: []
+  },
+
+  into_post(e) {
+    wx.navigateTo({
+      url: '../post/post?' + 'id=' + e.currentTarget.dataset.id,
+    })
+  },
+
+  async search() {
+    wx.showLoading();
+    // 按照filter搜索，更新list
+    var res = await db.collection("post").orderBy('post_time', 'desc').limit(10).get();
+    var ls = res.data;
+    for(let i = 0; i < ls.length; i++){
+      ls[i].time_statement = util.time_statement(ls[i].post_time);
+    };
+    this.setData({
+      list: ls
+    });
+    wx.hideLoading();
   },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    for(let i = 0; i < this.data.list.length; i++){
-      this.setData({
-        ['list[' + i + '].post_time']: new Date()
-      });
-      this.setData({
-        ['list[' + i + '].time_statement']: time.time_statement(this.data.list[i].post_time)
-      });
-    }
-    
   },
 
   /**
@@ -59,7 +49,7 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
-
+    this.search();
   },
 
   /**
@@ -80,7 +70,7 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh() {
-
+    this.onLoad();
   },
 
   /**

@@ -2,7 +2,9 @@
   "pages": [
     "pages/hole/hole",
     "pages/mine/mine",
-    "pages/write/write"
+    "pages/write/write",
+    "pages/loin/loin",
+    "pages/post/post"
   ],
   "window": {
     "navigationBarBackgroundColor": "#000000",
@@ -10,24 +12,23 @@
     "navigationBarTitleText": "HSZX-树洞"
   },
   "tabBar": {
-
-    "backgroundColor": "000000",
+    "backgroundColor": "#000000",
     "selectedColor": "#ffffff",
     "list": [
       {
         "pagePath": "pages/hole/hole",
-        "iconPath": "img/mine.png",
-        "selectedIconPath": "img/mine.png"
+        "iconPath": "img/home.png",
+        "selectedIconPath": "img/home_b.png"
       },
       {
         "pagePath": "pages/write/write",
-        "iconPath": "img/mine.png",
-        "selectedIconPath": "img/mine.png"
+        "iconPath": "img/write.png",
+        "selectedIconPath": "img/write_b.png"
       },
       {
         "pagePath": "pages/mine/mine",
         "iconPath": "img/mine.png",
-        "selectedIconPath": "img/mine.png"
+        "selectedIconPath": "img/mine_b.png"
       }
     ]
   }

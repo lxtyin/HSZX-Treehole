@@ -1,0 +1,31 @@
+<!--pages/loin.wxml-->
+
+<view class="title">
+  <text> L </text>
+  <text> o </text>
+  <text> i </text>
+  <text> n </text>
+</view>
+<text class="hint">
+使用学生邮箱(.edu.cn)验证登录
+或以访客身份浏览
+（发言不会和学号挂钩哦！）
+</text>
+
+<input class="line" value="{{title}}" bindinput="input_email" maxlength="30" auto-focus placeholder="邮箱"/>
+
+<view class="line" id="button" bindtap="send" wx:if="{{!sended}}">
+  <text class="button_text">发送验证码</text>
+</view>
+<view class="line" id="button" bindtap="send" wx:if="{{sended}}">
+  <text class="button_text">重新发送</text>
+</view>
+
+<input class="line" wx:if="{{sended}}" value="{{title}}" bindinput="input_code" maxlength="30" auto-focus placeholder="验证码"/>
+<view class="line" id="button" wx:if="{{sended}}" bindtap="loin">
+  <text class="button_text">进入</text>
+</view>
+
+<view class="line" id="visit" bindtap="visit">
+  <text class="button_text">访客进入</text>
+</view>

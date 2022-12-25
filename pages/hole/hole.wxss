@@ -1,7 +1,8 @@
 /* pages/hole/hole.wxss */
+
 page {
   height: 100%;
-  width: 750rpx;
+  width: 100%;
   flex-direction: column;
   display: flex;
   justify-content: left;
@@ -16,20 +17,18 @@ page {
 }
 
 .paster {
-  width: 680rpx;
+  width: 88%;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  border: solid;
-  border-color: rgb(44, 44, 44);
   border-radius: 10px;
   background-color:rgb(44, 44, 44);
   margin-top: 4%;
 }
 
 .head_bar, .content_bar, .bottom_bar {
-  margin-top: 10px;
-  margin-left: 10px;
+  margin: 10px;
+  margin-bottom: 0px;
 }
 
 .title {
@@ -40,34 +39,27 @@ page {
 .tag {
   color: rgba(255, 255, 169, 0.692);
   font-weight: bold;
-  text-align: center;
   font-size: 14px;
 }
 
-.content {
-  font-size: 12px;
-  text-align: left;
-  text-indent: 1em;
-  color: rgb(116, 116, 116);
-  overflow: hidden;
+.content_bar text {
   display: -webkit-box;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 2;  /*要显示的行数*/
   -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  word-break: break-all;
+  
+  width: 100%;
+  font-size: 12px;
+  margin-left: 3px;
+  text-align: left;
+  color: rgb(116, 116, 116);
 }
 
 .time {
   font-size: 13px;
   text-align: center;
   color: rgb(116, 116, 116);
-}
-
-.icon_bar {
-  margin-right: 5px;
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
 }
 
 .bottom_bar {
@@ -77,6 +69,18 @@ page {
   align-items: center;
 }
 
-.paster .icon {
+.icon_bar {
+  margin-right: 5px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+.icon_bar .icon {
   margin-right: 10px;
+}
+
+.icon_bar .icon text, .iconfont{
+  font-size: 14px;
+  color: rgb(192, 192, 192);
 }

@@ -1,5 +1,5 @@
 /* pages/write/write.wxss */
-page {
+.container {
   height: 100%;
   width: 750rpx;
   flex-direction: column;
@@ -8,29 +8,96 @@ page {
   align-items: center
 }
 
-.write_title text {
+.write_head text {
   font-size: 40pt;
   text-shadow: 0px 0px 11px rgb(255, 255, 255);
   font-family: "Comic Sans MS", cursive, sans-serif;
   color: rgba(255, 254, 199, 0.658);
 }
 
-.input_area {
-  width: 80%;
+.title_area, .content_area, .tag_area, .submit_button {
+  width: 88%;
+  display: flex;
+  margin-top: 10px;
   border-radius: 3px;
   background-color: rgb(80, 80, 80);
-  margin-top: 10px;
+}
+
+.content_area {
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.content {
+  width: 100%;
   display: flex;
 }
-
-#content_frame {
-  height: 30%;
+.content_area textarea {
+  width: 100%;
 }
 
-.weui-input {
+.text {
   width: 100%;
-  margin: 10px;
+  margin:10px;
   font-size: 15px;
   text-align: left;
   color: rgb(255, 255, 255);
+}
+.title_area .text {
+  font-weight: bold;
+}
+
+.image_area, .tag_area {
+  display: flex;
+  flex-wrap: wrap;
+}
+.image_area image,button {
+  width: 50px;
+  height: 50px;
+}
+.image_area view {
+  margin-bottom: 8px;
+  margin-left: 8px;
+  position: relative;
+}
+.image_area icon {
+  font-size: 20px;
+  position: absolute;
+  top: -3px;
+  right: 0px;
+}
+
+.tag_area {
+  display: flex;
+  justify-content: flex-start;
+}
+.tag {
+  background-color: rgb(77, 94, 153);
+  border-radius: 15px;
+  margin: 5px;
+  display: flex;
+  justify-content: row;
+  align-items: baseline;
+}
+.tag text, input {
+  margin: 7px;
+  font-size: 14px;
+  color: rgb(255, 235, 144);
+  font-weight: bold;
+}
+
+.button_area{
+  height: 20%;
+  display: flex;
+  justify-content: center;
+}
+
+.submit_button {
+  background-color: antiquewhite;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.submit_button text {
+  margin: 3px;
+  color: rgb(14, 34, 34);
 }

@@ -1,2 +1,16 @@
 <!--pages/mine/mine.wxml-->
-<text>pages/mine/mine.wxml</text>
+
+<view class="container">
+  <view class="head_bar">
+    <image src="{{avatar}}" bindtap="choose_avatar" mode="aspectFill" style="width: 100%;">
+    </image>
+  </view>
+  <view class="name_bar">
+    <input value="{{name}}" maxlength="15" bindinput="input_name"/>
+  </view>
+  <view class="confirm_bar" wx:if="{{name!=origin_name || changed_avatar}}">
+    <icon class="iconfont icon-yes" bindtap="confirm"></icon>
+  </view>
+</view>
+
+

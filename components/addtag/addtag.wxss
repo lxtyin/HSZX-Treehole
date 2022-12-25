@@ -1,0 +1,63 @@
+/* components/addtag/addtag.wxss */
+
+.dom {
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  z-index: 10; /*top*/
+}
+
+.dialog {
+  width: 60%;
+  position:fixed;
+  background-color: rgb(182, 12, 12);
+  border-radius: 5px;
+  top: 10%;
+  left: 20%;
+  display: flex;
+  flex-direction: column;
+}
+
+.hint_line {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hint_text {
+  text-align: center;
+  font-size: 10px;
+  color: rgb(211, 211, 211);
+}
+
+.tag_area {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.tag {
+  background-color: rgb(77, 94, 153);
+  border-radius: 15px;
+  margin: 5px;
+  display: flex;
+  justify-content: row;
+  align-items: baseline;
+}
+
+.tag text, input {
+  margin: 7px;
+  font-size: 14px;
+  color: rgb(255, 235, 144);
+  font-weight: bold;
+}
+.tag input {
+  margin-left: 0px;
+}
+
+.input_line {
+  margin: 10px;
+}

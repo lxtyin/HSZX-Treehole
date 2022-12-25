@@ -1,3 +1,5 @@
 {
-  "usingComponents": {}
+  "usingComponents": {
+    "addtag": "/components/addtag/addtag"
+  }
 }

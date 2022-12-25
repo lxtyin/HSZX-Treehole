@@ -1,10 +1,12 @@
 
+/* CDN 服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 @font-face {
   font-family: 'iconfont';  /* Project id 3822807 */
-  src: url('//at.alicdn.com/t/c/font_3822807_371vi9s6blq.woff2?t=1670847707342') format('woff2'),
-       url('//at.alicdn.com/t/c/font_3822807_371vi9s6blq.woff?t=1670847707342') format('woff'),
-       url('//at.alicdn.com/t/c/font_3822807_371vi9s6blq.ttf?t=1670847707342') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_3822807_azcpxhykbqd.woff2?t=1671885971379') format('woff2'),
+       url('//at.alicdn.com/t/c/font_3822807_azcpxhykbqd.woff?t=1671885971379') format('woff'),
+       url('//at.alicdn.com/t/c/font_3822807_azcpxhykbqd.ttf?t=1671885971379') format('truetype');
 }
+
 .iconfont {
   color: rgb(255, 255, 255);
   font-family:"iconfont" !important;
@@ -16,6 +18,10 @@
 .icon-like:before{content: '\eca1';}
 .icon-liked:before{content: '\e600';}
 .icon-comment:before{content: '\e8c5';}
+.icon-star:before{content: '\e8b9';}
+.icon-starred:before{content: '\e86a';}
+.icon-delete:before{content: '\e725';}
+.icon-yes:before{content: '\e611';}
 
 page {
   background-color: rgb(0, 0, 0);
@@ -23,5 +29,25 @@ page {
 
 text {
   font-size: 14pt;
+  color: rgb(255, 255, 255);
+}
+
+.time {
+  font-size: 13px;
+  text-align: center;
+  color: rgb(116, 116, 116);
+}
+
+.user_name {
+  font-size: 15px;
+  font-weight: bold;
   color: rgb(233, 233, 233);
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  margin: 5px;
+  border-radius: 300px;
+
 }

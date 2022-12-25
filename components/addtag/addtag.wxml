@@ -1,0 +1,25 @@
+<!--components/addtag/addtag.wxml-->
+
+<!-- 点击外侧关闭 -->
+<view class="dom" data-tagname="" bindtap="add_tag">
+  <view class="dialog" catchtap="donothing">
+    <view class="hint_line">
+      <text class="hint_text"> 常用TAG </text>
+    </view>
+    <view class="tag_area">
+      <view class="tag" wx:for="{{taglist}}" data-tagname="{{item}}" bindtap="add_tag">
+        <text> #{{item}} </text>
+      </view>
+    </view>
+    <view class="hint_line">
+      <text class="hint_text"> 自定义TAG </text>
+    </view>
+    <view class="input_line">
+      <view class="tag">
+        <text>#</text>
+        <input data-tagname="{{diytag}}" bindinput="input_tag" bindconfirm="add_tag" maxlength="10" placeholder="自定义TAG" auto-focus/>
+      </view>
+    </view>
+  </view>
+</view>
+

@@ -7,7 +7,7 @@
 - 私信：想与某人联系，可以点它，但必须等对方接受才能建立一个临时聊天框，聊天结束后销毁，支持生成图片保存。
   - 是否公开自己的信息，由用户自己定夺。
 - 帖子Tag以及帖子筛选
-- 新闻热点：校内外热点新闻话题，可以由管理员导入/系统自动获取，形成一帖并标有新闻TAG。
+-  新闻热点：校内外热点新闻话题，可以由管理员导入/系统自动获取，形成一帖并标有新闻TAG。
 - 个人功能：
   - 发帖
   - 写随笔，随时可发
@@ -16,31 +16,62 @@
 
 
 
+#### 登录
+
+使用学生邮箱验证登录，登录后直接将邮箱MD5加密得到secret_id，之后都使用secret_id作为身份。
+
+放弃登录则进入访客模式，secret_id = "vister"，不可发帖、点赞和评论。
+
+邮箱登录后即记录到本地缓存，使用本地缓存的邮箱登录不需要验证。
+
+
+
 #### 数据库
 
-- 用户认证
+- 用户 user
 
   - secret_id
-  - email
+  - avatar
+  - name
+  - star_post [post_id]
+  - upvote_post [post_id]
+  - upvote_comment [comment_id]（上述三表渲染时需多次查询，故同步存在本地data中）
+  - confirm_time
+- 帖子记录 post
 
-- 帖子记录
-
-  - post_id
+  - post_id(_id)
   - secret_id
-  - title
   - post_time
+  - title
   - content
-  - upvote
-  - imgs [url]
+  - imgs [fileID]
   - tags []
-  - comments [评论id]
+  - upvote_num
+  - star_num
+  - comment_num
+- 评论记录 comment
 
-- 评论记录
-
-  - comment_id
-  - post_id
+  - comment_id(_id)
   - secret_id
   - content
-  - upvote
-
+  - level (一级评论，二级评论，三级评论)
+  - post_id (楼主)
+  - father_id (对于2,3级评论，记录属于哪个1级评论，层主)
+  - reply_id (对于3级评论，记录回复的2级评论)
+  - comment_time
+  - comment_num
+  - upvote_num
   
+  评论、点赞、收藏的增删改操作都需要修改两个以上表的数据，利用事务完成？暂咕
+
+- 事务还不能where（（（（太逆天了
+- 取巧办法：上述非原子操作，都先进行数据的插入&更新&删除等，然后再更改num数值，即便出错也只有num显示对不上，问题不大。
+
+
+
+
+
+todos:
+
+- 本地更新
+- 访客判断
