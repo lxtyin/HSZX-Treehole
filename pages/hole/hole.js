@@ -15,16 +15,21 @@ Page({
 
   into_post(e) {
     wx.navigateTo({
-      url: '../post/post?' + 'id=' + e.currentTarget.dataset.id,
+      url: `../post/post?id=${e.currentTarget.dataset.id}`,
     })
   },
 
   async search() {
     wx.showLoading();
-    // 按照filter搜索，更新list
-    var res = await db.collection("post").orderBy('post_time', 'desc').limit(10).get();
-    var ls = res.data;
+    // var res = await db.collection("post").orderBy('post_time', 'desc').limit(10).get();
+    var ls = (await wx.cloud.callFunction({
+      name: 'get_postlist',
+      data: {
+        user_id: app.global_data._id
+      }
+    })).result;
     for(let i = 0; i < ls.length; i++){
+      ls[i].post_time = new Date(ls[i].post_time);
       ls[i].time_statement = util.time_statement(ls[i].post_time);
     };
     this.setData({
@@ -36,6 +41,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+
   },
 
   /**

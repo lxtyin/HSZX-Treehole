@@ -11,17 +11,16 @@ Page({
    * 结构：comment_1: [
    *  {
    *    comment info..
-   *    user: {
-   *      name
-   *      avatar
-   *    }
-   *    time_statement
-   *    fold_comment
-   *    upvoted(null)
-   *    comment_23 []
+   *    user: {}
+   *    comment_23 [
+   *      {
+   *        comment info..
+   *        user: {}
+   *        reply_user: {}
+   *      }
+   *    ]
    *  },
-   *  {
-   *  },...
+   *  {...}
    * ]
    */
   data: {
@@ -68,12 +67,13 @@ Page({
         level: Math.min(3, target.level + 1),
         content: "",
         father_id: e.currentTarget.dataset.fid,
-        reply_id: target._id,
+        reply_id: target.user._id,
         holder: "回复 " + target.user.name + "：",
       }
     })
   },
 
+  // 聚焦输入框
   focus() {
     this.setData({
       focus_reply: true
@@ -86,6 +86,7 @@ Page({
     if(this.data.reply.content.length <= 0) this.set_reply_post();
   },
 
+  // 折叠评论
   fold_1() { 
     this.setData({ fold_comment: true });
   },
@@ -95,7 +96,8 @@ Page({
     var res = (await wx.cloud.callFunction({
       name: 'get_post_commentlist',
       data: {
-        post_id: this.data._id
+        post_id: this.data._id,
+        user_id: app.global_data._id,
       }
     })).result
     for(let i = 0;i < res.length;i++){
@@ -103,7 +105,6 @@ Page({
       res[i].time_statement = util.time_statement(res[i].comment_time);
       res[i].fold_comment = true;
       res[i].comment_23 = [];
-      res[i].upvoted = res[i]._id in app.global_data.upvote_comment;
     }
     this.setData({
       comment_1: res
@@ -126,28 +127,44 @@ Page({
     var res = (await wx.cloud.callFunction({
       name: "get_comment_commentlist",
       data: {
-        father_id: this.data.comment_1[idx]._id
+        comment_id: this.data.comment_1[idx]._id,
+        user_id: app.global_data._id,
       }
     })).result;
     for(let i = 0;i < res.length;i++){
       res[i].comment_time = new Date(res[i].comment_time);
       res[i].time_statement = util.time_statement(res[i].comment_time);
-      res[i].upvoted = res[i]._id in app.global_data.upvote_comment;
-      res[i].reply_name = "已删除";
-      for(let j = 0;j < res.length;j++){  // 根据reply_id寻找对应reply_name
-        if(res[j]._id == res[i].reply_id){
-          res[i].reply_name = res[j].user.name;
-          break;
-        }
-      }
     }
-    
     this.setData({
       ["comment_1["+idx+"].comment_23"]: res
     })
     wx.hideLoading();
   },
 
+  // 点赞，收藏
+  async upvote_post() {
+    await db.collection('upvote').add({
+      data: {
+        user_id: app.global_data._id,
+        target_id: this.data._id,
+        type: 'post',
+      }
+    })
+    this.setData({
+      upvoted: true,
+      upvote_num: this.data.upvote_num + 1,
+    })
+  },
+  async de_upvote_post() {
+    var res = await db.collection('upvote').doc("048381bc63a852e1000fc3493a872dd7").remove();
+    console.log(res)
+    this.setData({
+      upvoted: false,
+      upvote_num: this.data.upvote_num - 1,
+    })
+  },
+
+  // 发送评论
   async send_comment() {
     if(this.data.reply.content.length <= 0){
       wx.showToast({
@@ -158,35 +175,26 @@ Page({
     }
     var reply = this.data.reply; // 补全信息
     reply.post_id = this.data._id;
-    reply.secret_id = app.global_data.secret_id;
+    reply.user_id = app.global_data._id;
     reply.comment_time = new Date();
-    reply.comment_num = 0;
-    reply.upvote_num = 0;
-    var _id = await util.send_comment(reply).catch(e => {
+    var res = (await db.collection('comment').add({
+      data: reply
+    }).catch(e => {
       wx.showToast({
         title: '发送失败！',
         icon: 'error'
       });
       throw e;
-    });
+    }))._id;
     wx.showToast({
       title: '发送成功',
     });
-    // 不改变评论状态，本地更新
+    // 本地更新
     this.setData({
       comment_num: this.data.comment_num + 1
     })
-    if(reply.level == 1){ // 前面增加一条
-      reply._id = _id;
-      reply.user = {
-        avatar: app.global_data.avatar,
-        name: app.global_data.name,
-      }
-      reply.time_statement = util.time_statement(reply.comment_time);
-      reply.upvoted = false;
-      var tmp = this.data.comment_1;
-      tmp.unshift(reply);
-      this.setData({  comment_1: tmp  })
+    if(reply.level == 1){
+      this.unfold_1();
     } else { // 找到并重新展开
       for(let i = 0;i < this.data.comment_1.length;i++){
         if(this.data.comment_1[i]._id == reply.father_id){
@@ -200,49 +208,21 @@ Page({
     }
   },
 
-  async upvote_post() {
-    // await util.upvote_post(this.data._id);
-    // this.setData({
-    //   upvote_num: this.data.upvote_num + 1,
-    //   upvoted: true,
-    // })
-  },
-  async upvote_comment_1(e) {
-    // var _id = e.currentTarget.dataset._id;
-    // var idx = e.currentTarget.dataset.idx;
-    // await util.upvote_comment(_id);
-    // this.setData({
-    //   ["comment_1[" + idx + "].comment_num"]: this.data.comment_1[idx].upvote_num + 1,
-    // })
-  },
-  async upvote_comment_23(e) {
-    // var _id = e.currentTarget.dataset._id;
-    // var idx = e.currentTarget.dataset.idx;
-    // var idx2 = e.currentTarget.dataset.idx2;
-    // await util.upvote_comment(_id);
-    // this.setData({
-    //   ["comment_1[" + idx + "].comment23[" + idx2 + "].comment_num"]: this.data.comment_1[idx].comment_23[idx2].upvote_num + 1,
-    // })
-  },
-
   /**
    * 生命周期函数--监听页面加载
    * options.id: post_id
    */
-  onLoad(options) {
-    wx.showLoading();
-    var that = this;
-    db.collection('post').doc(options.id).get({
-      async success(res) {
-        wx.hideLoading();
-        that.setData(res.data)
-        that.setData({
-          time_statement: util.time_statement(that.data.post_time),
-          upvoted: options.id in app.global_data.upvote_post,
-          starred: options.id in app.global_data.star_post,
-        })
+  async onLoad(options) {
+    var res = (await wx.cloud.callFunction({
+      name: "get_post",
+      data: {
+        post_id: options.id,
+        user_id: app.global_data._id,
       }
-    })
+    })).result;
+    res.post_time = new Date(res.post_time);
+    res.time_statement = util.time_statement(res.post_time);
+    this.setData(res);
   },
 
   /**
@@ -277,7 +257,6 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh() {
-    onload({id: this.data._id})
   },
 
   /**

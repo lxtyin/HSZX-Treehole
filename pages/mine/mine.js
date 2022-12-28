@@ -50,7 +50,7 @@ Page({
       })
     }
     await db.collection('user').where({
-      secret_id: app.global_data.secret_id
+      user_id: app.global_data.user_id
     }).update({
       data: {
         name: this.data.name,
@@ -75,20 +75,14 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad(options) {
+  async onLoad(options) {
     wx.showLoading();
-    var that = this;
-    db.collection('user').where({
-      secret_id: app.global_data.secret_id
-    }).get({
-      success(res) {
-        wx.hideLoading();
-        that.setData(res.data[0])
-        that.setData({
-          origin_name: res.data[0].name,
-          changed_avatar: false,
-        })
-      }
+    var res = await db.collection('user').doc(app.global_data._id).get();
+    wx.hideLoading();
+    this.setData(res.data)
+    this.setData({
+      origin_name: res.data.name,
+      changed_avatar: false,
     })
   },
 

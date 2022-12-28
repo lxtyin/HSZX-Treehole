@@ -16,7 +16,7 @@ const config = {
 var transporter = nodemailer.createTransport(config);
 
 // 云函数入口函数
-exports.main = async (event, context) => {
+exports.main = async (event) => {
   // 创建一个邮件对象
   var mail = {
     from: '来自 <lx_tyin@qq.com>',

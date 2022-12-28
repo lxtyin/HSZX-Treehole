@@ -3,5 +3,6 @@
   "projectname": "HSZX-Treehole",
   "setting": {
     "compileHotReLoad": true
-  }
+  },
+  "libVersion": "2.29.0"
 }

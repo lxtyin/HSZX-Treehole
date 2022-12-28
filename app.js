@@ -2,32 +2,23 @@
 App({
   global_data: {
     // 相当于user表中一条记录
-    secret_id: "visit",
-    upvote_post: [],
-    upvote_comment: [],
-    star_post : [],
+    _id: "visit",
+    avatar: "../../img/mine.png",
+    name: "访客",
   },
   onLaunch(){
     wx.cloud.init();
     const l = wx.getStorageSync('loin')
     var that = this;
-    if(l.secret_id){
-      wx.cloud.database().collection("user").where({
-        secret_id: l.secret_id,
-      }).get({
+    if(l.user_id){
+      wx.cloud.database().collection("user").doc(l.user_id).get({
         success(res) {
-          that.global_data = res.data[0];
-        }, 
-        fail() {
-          wx.redirectTo({
-            url: '/pages/loin/loin',
+          that.global_data = res.data;
+          wx.switchTab({
+            url: '/pages/hole/hole',
           })
         }
       });
-    } else {
-      wx.redirectTo({
-        url: '/pages/loin/loin',
-      })
     }
   }
 })

@@ -126,15 +126,12 @@ Page({
     for (let i = 0; i < this.data.imgs.length; i++) img_paths.push(this.data.imgs[i].path);
     await db.collection("post").add({
       data: {
-        secret_id: app.global_data.secret_id,
+        user_id: app.global_data._id,
         title: this.data.title,
         post_time: new Date(),
         content: this.data.content,
         imgs: img_paths,
         tags: this.data.tags,
-        comment_num: 0,
-        star_num: 0,
-        upvote_num: 0,
       }
     }).catch(e => {
       wx.showToast({
@@ -186,7 +183,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    if (app.global_data.secret_id == "visit") {
+    if (app.global_data.user_id == "visit") {
       this.setData({
         submitable: false
       })

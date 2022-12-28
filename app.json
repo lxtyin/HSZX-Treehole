@@ -1,9 +1,9 @@
 {
   "pages": [
+    "pages/loin/loin",
     "pages/hole/hole",
     "pages/mine/mine",
     "pages/write/write",
-    "pages/loin/loin",
     "pages/post/post"
   ],
   "window": {

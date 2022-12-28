@@ -72,25 +72,22 @@ Page({
       wx.showLoading()
       var id = md5.hexMD5(this.data.email);
       var res = await db.collection("user").where({
-        secret_id: id
-      }).get(); // 寻找该用户
-      if(res.data.length == 0){
+        _id: id
+      }).get();
+      if(res.data.length <= 0){
         wx.showLoading({
           title: '正在创建用户',
         })
         res = {
-          secret_id: id,
+          _id: id,
           avatar: "../../img/mine.png",
           name: "默认马甲",
-          star_post : [],
-          upvote_post: [],
-          upvote_comment: [],
           confirm_time: new Date()
         }
         await db.collection("user").add({ data: res })
-      } else res = res.data[0]
+      } else res = res.data[0];
       wx.hideLoading();
-      wx.setStorageSync('loin', {secret_id: res.secret_id});
+      wx.setStorageSync('loin', {user_id: res._id});
       app.global_data = res;
       wx.showToast({
         title: '登录成功',
@@ -109,7 +106,11 @@ Page({
     }
   },
   visit() {
-    app.global_data.secret_id = "visit"
+    app.global_data = {
+      _id: "visit",
+      avatar: "../../img/mine.png",
+      name: "访客",
+    }
     wx.switchTab({
       url: '/pages/hole/hole',
     })

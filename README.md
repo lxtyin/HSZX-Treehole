@@ -16,62 +16,64 @@
 
 
 
-#### 登录
+#### 匿名&权限处理方法
 
-使用学生邮箱验证登录，登录后直接将邮箱MD5加密得到secret_id，之后都使用secret_id作为身份。
+不使用wx登录（云数据库会乱塞openID，很麻烦）
 
-放弃登录则进入访客模式，secret_id = "vister"，不可发帖、点赞和评论。
+加密算法存在服务端，是某种魔改MD5
 
-邮箱登录后即记录到本地缓存，使用本地缓存的邮箱登录不需要验证。
+使用邮箱登录，将邮箱单向加密**两次**，第一次的结果作为secret_id，第二次的结果作为user_id，公开且用user_id索引。
+
+secret_id不存入数据库，直接单独发送给用户作为认证标识。
+
+所有操作在后端进行，用户需将自己的secret_id带上以作为验证。
+
+
+
+即便知道了加密算法，也不能从user_id推算出secret_id，权限上安全，也不能推算出邮箱。
+
+但如果加密算法和邮箱都被别人知道，就能找出是谁了	
 
 
 
 #### 数据库
 
 - 用户 user
-
-  - secret_id
+  - user_id(_id)
   - avatar
   - name
-  - star_post [post_id]
-  - upvote_post [post_id]
-  - upvote_comment [comment_id]（上述三表渲染时需多次查询，故同步存在本地data中）
   - confirm_time
 - 帖子记录 post
-
   - post_id(_id)
-  - secret_id
+  - user_id
   - post_time
   - title
   - content
   - imgs [fileID]
   - tags []
-  - upvote_num
-  - star_num
-  - comment_num
 - 评论记录 comment
-
   - comment_id(_id)
-  - secret_id
+  - user_id
   - content
   - level (一级评论，二级评论，三级评论)
   - post_id (楼主)
   - father_id (对于2,3级评论，记录属于哪个1级评论，层主)
-  - reply_id (对于3级评论，记录回复的2级评论)
+  - reply_id (对于2,3级评论，记录回复目标的secret_id（只有三级评论用到)
   - comment_time
-  - comment_num
-  - upvote_num
-  
-  评论、点赞、收藏的增删改操作都需要修改两个以上表的数据，利用事务完成？暂咕
+- 点赞（关系表）upvote
+  - user_id
+  - target_id （comment或post的id）
+  - type （comment或post）
 
-- 事务还不能where（（（（太逆天了
-- 取巧办法：上述非原子操作，都先进行数据的插入&更新&删除等，然后再更改num数值，即便出错也只有num显示对不上，问题不大。
-
+- 收藏（关系表）star
+  - user_id
+  - post_id
 
 
 
 
 todos:
 
-- 本地更新
-- 访客判断
+本地更新
+
+访客判断

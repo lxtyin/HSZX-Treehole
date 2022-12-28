@@ -19,16 +19,18 @@
     </view>
     <view class="icon_bar">
       <view class="icon">
-        <icon class="iconfont icon-star"></icon>
-        <text> {{item.star_num}} </text>
+        <icon class="iconfont icon-star" wx:if="{{!item.starred}}"></icon>
+        <icon class="iconfont icon-starred" wx:if="{{item.starred}}"></icon>
+        <text wx:if="{{item.star_num > 0}}"> {{item.star_num}} </text>
       </view>
       <view class="icon">
-        <icon class="iconfont icon-like"></icon>
-        <text> {{item.upvote_num}} </text>
+        <icon class="iconfont icon-like" wx:if="{{!item.upvoted}}"></icon>
+        <icon class="iconfont icon-liked" wx:if="{{item.upvoted}}"></icon>
+        <text wx:if="{{item.upvote_num > 0}}"> {{item.upvote_num}} </text>
       </view>
       <view class="icon">
         <icon class="iconfont icon-comment"></icon>
-        <text> {{item.comment_num}} </text>
+        <text > {{item.comment_num}} </text>
       </view>
     </view>
   </view>
