@@ -1,0 +1,59 @@
+/* pages/message/message.wxss */
+
+.container {
+  height: 100%;
+  width: 750rpx;
+  flex-direction: column;
+  display: flex;
+  justify-content: left;
+  align-items: center
+}
+
+.pagetitle text {
+  font-size: 30pt;
+}
+
+.paster {
+  position: relative;
+  width: 88%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  border-radius: 10px;
+  background-color: var(--back2-color);
+  margin-top: 4%;
+}
+
+.head_bar {
+  margin: 3%;
+  margin-bottom: 0px;
+}
+.title_bar {
+  margin: 5%;
+}
+.content_bar {
+  margin: 3%;
+  margin-left: 5%;
+  margin-bottom: 0%;
+}
+
+.unrhint {
+  position: absolute;
+  right: 30px;
+  top: 5px;
+  border: solid var(--main3-color);
+  border-radius: 5px;
+  background-color: var(--main3-color);
+}
+.unrhint text {
+  margin: 5px;
+}
+
+.paster .icon-delete {
+  color: var(--main4-color);
+  font-size: 20px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+

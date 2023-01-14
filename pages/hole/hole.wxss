@@ -8,12 +8,49 @@ page {
   justify-content: left;
   align-items: center
 }
+.pagetitle {
+  margin-top: 15%;
+}
 
-.hole_title text {
-  font-size: 50pt;
-  text-shadow: 0px 0px 11px rgb(255, 255, 255);
-  font-family: "Comic Sans MS", cursive, sans-serif;
-  color: rgba(255, 254, 199, 0.658);
+.search_bar {
+  position:fixed;
+  top: 0px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--back2-color);
+}
+.search_bar .line1 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: baseline;
+}
+.search_bar .line1 input {
+  margin: 5px;
+  width: 85%;
+  color: var(--text-color);
+}
+.search_bar .line1 .icon{
+  margin-right: 5px;
+}
+.search_bar .line1 .iconfont {
+  font-size: 18px;
+}
+
+.search_bar .line2 {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--back3-color);
+  justify-content: space-between;
+}
+.search_bar .line2 .option {
+  width: 33%;
+  border-left: solid;
+  border-color: var(--main-color);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
 .paster {
@@ -22,22 +59,17 @@ page {
   flex-direction: column;
   justify-content: space-around;
   border-radius: 10px;
-  background-color:rgb(44, 44, 44);
+  background-color: var(--back2-color);
   margin-top: 4%;
 }
 
-.head_bar, .content_bar, .bottom_bar {
+.title_bar, .content_bar, .bottom_bar {
   margin: 10px;
   margin-bottom: 0px;
 }
 
-.title {
-  font-weight: bold;
-  font-size: 14px;
-}
-
 .tag {
-  color: rgba(255, 255, 169, 0.692);
+  color: var(--main-color);
   font-weight: bold;
   font-size: 14px;
 }
@@ -53,34 +85,29 @@ page {
   font-size: 12px;
   margin-left: 3px;
   text-align: left;
-  color: rgb(116, 116, 116);
-}
-
-.time {
-  font-size: 13px;
-  text-align: center;
-  color: rgb(116, 116, 116);
+  color: var(--text-dim-color);
 }
 
 .bottom_bar {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
+}
+
+.time {
+  font-size: 13px;
+  text-align: center;
+  color: var(--text-dim-color);
 }
 
 .icon_bar {
-  margin-right: 5px;
   margin-bottom: 10px;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
 }
 .icon_bar .icon {
-  margin-right: 10px;
+  margin-left: 10px;
 }
 
-.icon_bar .icon text, .iconfont{
-  font-size: 14px;
-  color: rgb(192, 192, 192);
-}

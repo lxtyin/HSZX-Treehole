@@ -1,7 +1,6 @@
 
 const app = getApp();
 const util = require("../../utils/util")
-const db = wx.cloud.database()
 
 Page({
   /**
@@ -21,48 +20,40 @@ Page({
     var res = await wx.chooseMedia({
       count: 1,
       mediaType: ['image'],
+    }).catch(e => {
+      util.hint(e.message);
+      throw e;
     });
+    console.log(res);
     this.setData({
       avatar: res.tempFiles[0].tempFilePath,
       changed_avatar: true
     })
   },
   async confirm() {
+    wx.showLoading();
     if(this.data.name.length <= 0){
-      wx.showToast({
-        title: '马甲不能为空！',
-        icon: 'error'
-      })
+      util.hint("马甲不能为空！");
       return;
     }
-    wx.showLoading();
     if(this.data.changed_avatar) {
       // 上传头像
       var res = await util.upload_file(this.data.avatar).catch(e => {
-        wx.showToast({
-          title: '头像上传失败！',
-          icon: 'error'
-        })
+        util.hint("头像上传失败！");
         throw e;
       });
       this.setData({
         avatar: res
       })
     }
-    await db.collection('user').where({
-      user_id: app.global_data.user_id
-    }).update({
-      data: {
-        name: this.data.name,
-        avatar: this.data.avatar,
-      }
+    await util.request("/user/update", {
+      user_id: this.data.user_id,
+      name: this.data.name,
+      avatar: this.data.avatar,
     }).catch(e => {
-      wx.showToast({
-        title: '更新失败！',
-        icon: 'error'
-      })
+      util.hint(e.message);
       throw e;
-    });
+    })
     wx.showToast({ title: '修改成功' })
     app.global_data.avatar = this.data.avatar;
     app.global_data.name = this.data.name;
@@ -72,20 +63,52 @@ Page({
     })
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  async onLoad(options) {
-    wx.showLoading();
-    var res = await db.collection('user').doc(app.global_data._id).get();
-    wx.hideLoading();
-    this.setData(res.data)
-    this.setData({
-      origin_name: res.data.name,
-      changed_avatar: false,
+  to_message() {
+    wx.switchTab({
+      url: '/pages/message/message',
+    })
+  },
+  to_mine() {
+    app.global_data.switch_option = {
+      mine_only: true
+    }
+    wx.switchTab({
+      url: '/pages/hole/hole',
+    })
+  },
+  to_star() {
+    app.global_data.switch_option = {
+      star_only: true
+    }
+    wx.switchTab({
+      url: '/pages/hole/hole',
+    })
+  },
+  to_about() {
+    wx.navigateTo({
+      url: '/pages/about/about',
     })
   },
 
+  async logout() {
+    wx.redirectTo({
+      url: '/pages/loin/loin?switch=true',
+    })
+  },
+
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad(options) {
+  },
+	onTabItemTap () {
+    this.setData(app.global_data)
+    this.setData({
+      origin_name: this.data.name,
+      changed_avatar: false,
+    })
+  },
+  
   /**
    * 生命周期函数--监听页面初次渲染完成
    */

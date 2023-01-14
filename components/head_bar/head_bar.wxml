@@ -1,0 +1,9 @@
+<!--components/head_bar/head_bar.wxml-->
+
+<view class="head_bar">
+  <image class="avatar" src="{{user_avatar}}"></image>
+  <view class='head-r'>
+    <text class="user_name"> {{user_name}} </text>
+    <text class="time"> {{time_statement}} </text>
+  </view>
+</view>

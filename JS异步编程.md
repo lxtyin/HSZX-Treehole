@@ -1,3 +1,5 @@
+## 异步编程
+
 要更好的理解异步编程，首先应该更好地理解需求。
 
 我是在写小程序写出回调地狱时，才理解了 `Promise` 中的那些 `then` 到底是在干嘛，好处在哪里。
@@ -75,18 +77,46 @@ catch，finally的返回值仍然是Promise，它们在下面会有很好的用�
 
 如果 `await` 后面跟正常值，就会原样返回。
 
-任何一个 `await` 后面的Promise进入reject态了，整个async函数都会中断并抛出。
+任何一个 `await` 后面的Promise进入reject态了，`await` 就会把错误抛出，中断后续过程。
 
 用到 `async await` 后，异步编程就和同步变成一样简单了，`await` 看作等待即可。
 
 ##### 异常处理
 
-如果不希望直接弹出，还要进行一些操作
+正常throw一个Error时，会中断函数的执行，并且控制台中可以看到报错。
 
-最优雅的方式：
+在Promise（过程）函数中throw相当于reject，并以error作为参数，同时也中断后续过程；
+
+如果这个Promise被catch（或被then的第二个参数）了，则error不会直接显示在控制台中；
+
+catch或then返回的是一个新Promise，以catch为例，它会“捕获”这个异常并处理它，它本身也仅仅是一个正常Promise，如果希望继续上传，则需要在catch中再次throw。
+
+await后的Promise进入reject态时，await直接抛出错误，相当于 `.catch(e => throw e)`。
+
+**总之**：Error像是一个从底往上不断传递的过程，直到它被捕获为止。如果上传到了顶层还没有处理，就会在控制台中显示输出。
+
+一种优雅的，在await后添加错误处理的方法。
 
 ```js
 await dosomething().catch(e => {...})
 ```
 
-dosomething这个Promise如果异常，就会直接被catch了，然后catch处理后返回正常的Promise，故await不会接到一个reject的Promise而中断。
+
+
+## 其他JS
+
+#### 
+
+##### this
+
+看你所在的函数，属于哪个对象，this就指哪个对象。
+
+若函数不属于某个对象，this就指代全局对象。
+
+
+
+##### require
+
+一个模块只会被加载一次，并且是通过实际文件区别的，和`require(...)`中的参数路径无关。
+
+也就是说对于很多模块而言，可以放心地直接在文件中进行初始化。

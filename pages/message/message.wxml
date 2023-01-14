@@ -1,0 +1,37 @@
+<!--pages/message/message.wxml-->
+
+<view class="container">
+  <view class="pagetitle">
+    <text> M </text>
+    <text> e </text>
+    <text> s </text>
+    <text> s </text>
+    <text> a </text>
+    <text> g </text>
+    <text> e </text>
+  </view>
+  <view class="paster" wx:for="{{list}}" data-url="{{item.link}}" data-mid="{{item.message_id}}"
+   bindtap="click_link">
+
+    <icon class="iconfont icon-delete" data-mid="{{item.message_id}}" catchtap="del_message"></icon>
+    <view class="unrhint" wx:if="{{!item.readed}}">
+      <text style="color: var(--back-color);">未读</text>
+    </view>
+
+    <view class="head_bar">
+      <head_bar user_name="{{item.user_name}}" user_avatar="{{item.user_avatar}}"
+     time_statement="{{item.time_statement}}">
+    </head_bar>
+    </view>
+    <view class="content_bar">
+      <text class="content"> {{item.content}} </text>
+    </view>
+    <view class="title_bar">
+      <text class="title"> {{item.title}} </text>
+    </view>
+  </view>
+  <text style="color: var(--main-color);margin: 1em; margin-bottom: 30vh;">--到底了--</text>
+</view>
+
+
+

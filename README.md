@@ -18,62 +18,93 @@
 
 #### 匿名&权限处理方法
 
-不使用wx登录（云数据库会乱塞openID，很麻烦）
+使用wx登录（本来是邮箱）
 
 加密算法存在服务端，是某种魔改MD5
 
-使用邮箱登录，将邮箱单向加密**两次**，第一次的结果作为secret_id，第二次的结果作为user_id，公开且用user_id索引。
+wx登录得到openid后，将openid单向加密**两次**，第一次的结果作为secret_id，第二次的结果作为user_id，公开且用user_id索引。（因为不懂openid能不能倒推微信）
 
 secret_id不存入数据库，直接单独发送给用户作为认证标识。
 
 所有操作在后端进行，用户需将自己的secret_id带上以作为验证。
 
+登录时，也可以使用本地缓存的secret_id直接登录。
+
 
 
 即便知道了加密算法，也不能从user_id推算出secret_id，权限上安全，也不能推算出邮箱。
 
-但如果加密算法和邮箱都被别人知道，就能找出是谁了	
+
+
+#### 热度
+
+post热度权重：浏览1，点赞3，评论7，收藏10
+
+最后乘以时间系数：$10/(10+至今天数)$
+
+一级Comment：基本同上
+
+二三级Comment：总是按时间排序
 
 
 
 #### 数据库
 
 - 用户 user
-  - user_id(_id)
+  - user_id
   - avatar
   - name
   - confirm_time
 - 帖子记录 post
-  - post_id(_id)
+  - post_id
   - user_id
   - post_time
   - title
   - content
-  - imgs [fileID]
+  - imgs []
   - tags []
 - 评论记录 comment
-  - comment_id(_id)
+  - comment_id
   - user_id
   - content
   - level (一级评论，二级评论，三级评论)
   - post_id (楼主)
   - father_id (对于2,3级评论，记录属于哪个1级评论，层主)
-  - reply_id (对于2,3级评论，记录回复目标的secret_id（只有三级评论用到)
+  - reply_id (记录回复目标的user_id（只有三级评论用到)
   - comment_time
-- 点赞（关系表）upvote
+- 点赞（关系表）upvote_post
   - user_id
-  - target_id （comment或post的id）
-  - type （comment或post）
+  - post_id
+  
+- 点赞（关系表）upvote_comment
+  - user_id
+  
+  - comment_id
 
 - 收藏（关系表）star
   - user_id
   - post_id
+- 消息 message
+  - f_user_id
+  - t_user_id（发给谁的）
+  - title
+  - content
+  - readed
+  - link（链接，仅支持小程序中可以navigateTo的链接，一般为Post页面链接）
+  
 
 
 
 
-todos:
+数据库除了级联删除外，不进行其他多余限制或额外操作。
 
-本地更新
 
-访客判断
+
+#### 前后端交互
+
+除了上传文件以外，请求和响应总是使用Json格式的对象。
+
+##### 错误处理
+
+后端对于正常数据以状态码200响应，对于预期的错误，以状态码400+响应，并返回提示信息；对于未预期的错误，总是以状态码500响应，前端显示服务端错误。
+

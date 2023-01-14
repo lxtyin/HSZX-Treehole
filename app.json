@@ -3,8 +3,10 @@
     "pages/loin/loin",
     "pages/hole/hole",
     "pages/mine/mine",
+    "pages/message/message",
     "pages/write/write",
-    "pages/post/post"
+    "pages/post/post",
+    "pages/about/about"
   ],
   "window": {
     "navigationBarBackgroundColor": "#000000",
@@ -24,6 +26,11 @@
         "pagePath": "pages/write/write",
         "iconPath": "img/write.png",
         "selectedIconPath": "img/write_b.png"
+      },
+      {
+        "pagePath": "pages/message/message",
+        "iconPath": "img/message.png",
+        "selectedIconPath": "img/message_b.png"
       },
       {
         "pagePath": "pages/mine/mine",

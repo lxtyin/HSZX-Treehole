@@ -6,10 +6,28 @@
     </image>
   </view>
   <view class="name_bar">
-    <input value="{{name}}" maxlength="15" bindinput="input_name"/>
+    <input value="{{name}}" maxlength="16" bindinput="input_name"/>
   </view>
   <view class="confirm_bar" wx:if="{{name!=origin_name || changed_avatar}}">
     <icon class="iconfont icon-yes" bindtap="confirm"></icon>
+  </view>
+  
+  <view class="line_bar">
+    <view class="line" bindtap="to_message">
+      <text>我的消息</text>
+    </view>
+    <view class="line" bindtap="to_mine">
+      <text>我的帖子</text>
+    </view>
+    <view class="line" bindtap="to_star">
+      <text>我的收藏</text>
+    </view>
+    <view class="line" bindtap="to_about">
+      <text>关于</text>
+    </view>
+    <view class="line" id="switchaccount" bindtap="logout">
+      <text>切换账号</text>
+    </view>
   </view>
 </view>
 

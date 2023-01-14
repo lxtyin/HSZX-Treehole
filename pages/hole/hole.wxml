@@ -1,12 +1,37 @@
 <!--pages/hole/hole.wxml-->
-<view class="hole_title">
+
+<view class="pagetitle">
   <text> H </text>
-  <text style="color: rgb(0, 0, 0);"> O </text>
-  <text> L </text>
-  <text> E </text>
+  <text> S </text>
+  <text> Z </text>
+  <text> X </text>
 </view>
-<view class="paster" wx:for="{{list}}" data-id="{{item._id}}" bindtap="into_post">
-  <view class="head_bar">
+<view class="search_bar">
+  <view class="line1">
+    <input placeholder="搜索"
+     bindinput="input_search" bindtap="show_line2"/>
+    <view class="icon" bindtap="search" capture-bind:tap="hide_line2">
+      <icon class="iconfont icon-search"></icon>
+    </view>
+  </view>
+  <view class="line2" wx:if="{{show_line2}}">
+    <view class="option" bindtap="switch_option_mine" style="border-left: none;">
+      <text wx:if="{{options.mine_only}}"  style="color: var(--main-color);">只看我的</text>
+      <text wx:if="{{!options.mine_only}}" style="color: var(--text-dim-color);">只看我的</text>
+    </view>
+    <view class="option" bindtap="switch_option_star">
+      <text wx:if="{{options.star_only}}" style="color: var(--main-color);">只看收藏</text>
+      <text wx:if="{{!options.star_only}}" style="color: var(--text-dim-color);">只看收藏</text>
+    </view>
+    <view class="option" bindtap="switch_method">
+      <text wx:if="{{options.method=='time'}}" style="color: var(--main-color);">按时间</text>
+      <text wx:if="{{options.method=='fever'}}" style="color: var(--main-color);">按热度</text>
+    </view>
+  </view>
+</view>
+
+<view class="paster" wx:for="{{list}}" data-id="{{item.post_id}}" bindtap="into_post">
+  <view class="title_bar">
     <text class="title"> {{item.title}} </text>
     <text wx:if="{{item.tags.length > 0}}" class="tag"> #{{item.tags}} </text>
   </view>
@@ -14,25 +39,27 @@
     <text> {{item.content}} </text>
   </view>
   <view class="bottom_bar">
-    <view class="time_bar">
-      <text class="time"> {{item.time_statement}} </text>
+    <view class='head'>
+      <text class="content2"> {{item.user_name}}  {{item.time_statement}} </text>
     </view>
     <view class="icon_bar">
       <view class="icon">
         <icon class="iconfont icon-star" wx:if="{{!item.starred}}"></icon>
         <icon class="iconfont icon-starred" wx:if="{{item.starred}}"></icon>
-        <text wx:if="{{item.star_num > 0}}"> {{item.star_num}} </text>
+        <text class="icontext" wx:if="{{item.star_num > 0}}"> {{item.star_num}} </text>
       </view>
       <view class="icon">
         <icon class="iconfont icon-like" wx:if="{{!item.upvoted}}"></icon>
         <icon class="iconfont icon-liked" wx:if="{{item.upvoted}}"></icon>
-        <text wx:if="{{item.upvote_num > 0}}"> {{item.upvote_num}} </text>
+        <text class="icontext" wx:if="{{item.upvote_num > 0}}"> {{item.upvote_num}} </text>
       </view>
       <view class="icon">
         <icon class="iconfont icon-comment"></icon>
-        <text > {{item.comment_num}} </text>
+        <text class="icontext" wx:if="{{item.comment_num > 0}}"> {{item.comment_num}} </text>
       </view>
     </view>
   </view>
 </view>
 
+<text style="color: var(--main-color);margin: 1em; margin-bottom: 30vh;">--到底了--</text>
+<text style="color: var(--main-color);">---</text>

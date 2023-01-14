@@ -1,0 +1,40 @@
+<!--pages/about/about.wxml-->
+<text class="content">
+这页懒得排了（（
+</text>
+<text class="title">
+  TODO：
+</text>
+<text class="content">
+
+icon换源
+
+emoji和图片嵌入（得大改）
+
+广告栏
+
+私信？
+</text>
+
+<text class="title">
+  做了没塞：
+</text>
+<text class="content">
+浏览数、热度（帖子信息里包括read_num, fever为浏览数，热度值）
+
+帖子的修改、删除、举报键，评论的删除按钮
+
+消息的全部已读、删除已读按钮
+</text>
+
+
+<text class="title">
+  开发
+</text>
+<text class="content">
+lx_tyin
+</text>
+<text class="title">
+  Copyright © 2023 lx_tyin.
+   All rights reserved.
+</text>

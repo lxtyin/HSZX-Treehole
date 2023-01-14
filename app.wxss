@@ -1,16 +1,35 @@
 
+page {
+  /* 定义全局颜色 */
+  --back-color: black;
+  --back2-color: rgb(44, 44, 44);
+  --back3-color: rgb(66, 66, 66);
+  --text-color: rgb(218, 216, 216);
+  --text-bright-color: aliceblue;
+  --text-dim-color: rgb(146, 146, 146);
+  --icon-color: rgb(255, 254, 211);
+  --main-color: rgb(255, 226, 163);
+  --main2-color:  rgb(250, 255, 208);
+  --main3-color:  rgb(179, 210, 245); 
+  --main4-color:  rgb(255, 111, 111); 
+}
+
+page {
+  background-color: var(--back-color);
+}
+
 /* CDN 服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 @font-face {
   font-family: 'iconfont';  /* Project id 3822807 */
-  src: url('//at.alicdn.com/t/c/font_3822807_azcpxhykbqd.woff2?t=1671885971379') format('woff2'),
-       url('//at.alicdn.com/t/c/font_3822807_azcpxhykbqd.woff?t=1671885971379') format('woff'),
-       url('//at.alicdn.com/t/c/font_3822807_azcpxhykbqd.ttf?t=1671885971379') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_3822807_b1xpelcfb2m.woff2?t=1672726576699') format('woff2'),
+       url('//at.alicdn.com/t/c/font_3822807_b1xpelcfb2m.woff?t=1672726576699') format('woff'),
+       url('//at.alicdn.com/t/c/font_3822807_b1xpelcfb2m.ttf?t=1672726576699') format('truetype');
 }
 
 .iconfont {
-  color: rgb(255, 255, 255);
+  color: var(--icon-color);
   font-family:"iconfont" !important;
-  font-size:50rpx;
+  font-size:16px;
   font-style:normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -20,34 +39,39 @@
 .icon-comment:before{content: '\e8c5';}
 .icon-star:before{content: '\e8b9';}
 .icon-starred:before{content: '\e86a';}
-.icon-delete:before{content: '\e725';}
+.icon-delete:before{content: '\e6ac';}
 .icon-yes:before{content: '\e611';}
+.icon-search:before{content: '\e752';}
 
-page {
-  background-color: rgb(0, 0, 0);
+
+/* iconfont旁边的提示字 */
+.icontext {
+  font-size: 14px;
+  color: var(--icon-color);
 }
 
-text {
-  font-size: 14pt;
-  color: rgb(255, 255, 255);
+.pagetitle text {
+  font-size: 50pt;
+  text-shadow: 0px 0px 11px rgb(255, 255, 255);
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  color: var(--main2-color);
 }
 
-.time {
-  font-size: 13px;
-  text-align: center;
-  color: rgb(116, 116, 116);
-}
-
-.user_name {
-  font-size: 15px;
+/* 标题 */
+.title {
   font-weight: bold;
-  color: rgb(233, 233, 233);
+  font-size: 14px;
+  color: var(--text-bright-color);
 }
 
-.avatar {
-  width: 30px;
-  height: 30px;
-  margin: 5px;
-  border-radius: 300px;
+/* 内容 */
+.content {
+  font-size: 15px;
+  color: var(--text-color);
+}
 
+/* 次要内容 */
+.content2 {
+  font-size: 13px;
+  color: var(--text-dim-color);
 }

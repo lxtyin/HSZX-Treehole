@@ -1,7 +1,6 @@
 // pages/post/post.js
 
 const app = getApp();
-const db = wx.cloud.database();
 const util = require("../../utils/util")
 
 Page({
@@ -11,11 +10,9 @@ Page({
    * 结构：comment_1: [
    *  {
    *    comment info..
-   *    user: {}
    *    comment_23 [
    *      {
    *        comment info..
-   *        user: {}
    *        reply_user: {}
    *      }
    *    ]
@@ -25,6 +22,7 @@ Page({
    */
   data: {
     fold_comment: true,
+    method: 'time',
     comment_1: [],
     // 当前回复状态
     reply: {
@@ -38,6 +36,15 @@ Page({
     focus_reply: false,
   },
 
+  switch_method() {
+    if(this.data.method == 'time') this.setData({
+      method: 'fever'
+   });
+   else this.setData({ 
+     method: 'time'
+   });
+   this.unfold_1();
+  },
   input_reply(e) {
     this.setData({
       "reply.content": e.detail.value
@@ -49,8 +56,8 @@ Page({
       reply: {
         level: 1,
         content: "",
-        father_id: this.data._id,
-        reply_id: "",
+        father_id: null,
+        reply_id: this.data.user_id,
         holder: "和平讨论，不带节奏"
       }
     })
@@ -67,8 +74,8 @@ Page({
         level: Math.min(3, target.level + 1),
         content: "",
         father_id: e.currentTarget.dataset.fid,
-        reply_id: target.user._id,
-        holder: "回复 " + target.user.name + "：",
+        reply_id: target.user_id,
+        holder: "回复 " + target.user_name + "：",
       }
     })
   },
@@ -93,13 +100,11 @@ Page({
   async unfold_1() {  
     this.setData({ fold_comment: false })
     wx.showLoading();
-    var res = (await wx.cloud.callFunction({
-      name: 'get_post_commentlist',
-      data: {
-        post_id: this.data._id,
-        user_id: app.global_data._id,
-      }
-    })).result
+    var res = await util.request('/search/comments1', {
+      user_id: app.global_data.user_id,
+      post_id: this.data.post_id,
+      method: this.data.method,
+    })
     for(let i = 0;i < res.length;i++){
       res[i].comment_time = new Date(res[i].comment_time);
       res[i].time_statement = util.time_statement(res[i].comment_time);
@@ -124,13 +129,10 @@ Page({
     this.setData({
       ["comment_1["+idx+"].fold_comment"]: false
     })
-    var res = (await wx.cloud.callFunction({
-      name: "get_comment_commentlist",
-      data: {
-        comment_id: this.data.comment_1[idx]._id,
-        user_id: app.global_data._id,
-      }
-    })).result;
+    var res = await util.request('/search/comments23', {
+      user_id: app.global_data.user_id,
+      father_id: this.data.comment_1[idx].comment_id,
+    })
     for(let i = 0;i < res.length;i++){
       res[i].comment_time = new Date(res[i].comment_time);
       res[i].time_statement = util.time_statement(res[i].comment_time);
@@ -143,61 +145,186 @@ Page({
 
   // 点赞，收藏
   async upvote_post() {
-    await db.collection('upvote').add({
-      data: {
-        user_id: app.global_data._id,
-        target_id: this.data._id,
-        type: 'post',
-      }
-    })
-    this.setData({
-      upvoted: true,
-      upvote_num: this.data.upvote_num + 1,
-    })
+    var data = {
+      user_id: app.global_data.user_id,
+      target_id: this.data.post_id,
+      type: 'post'
+    }
+    if(this.data.upvoted){
+      await util.request('/upvote/del', data).catch(e => {
+        util.hint(e.message);
+        throw e;
+      });
+      this.setData({ 
+        upvoted: false,
+        upvote_num: this.data.upvote_num - 1,
+      });
+    } else {
+      await util.request('/upvote/add', data).catch(e => {
+        util.hint(e.message);
+        throw e;
+      });
+      this.setData({ 
+        upvoted: true,
+        upvote_num: this.data.upvote_num + 1,
+      });
+    }
   },
-  async de_upvote_post() {
-    var res = await db.collection('upvote').doc("048381bc63a852e1000fc3493a872dd7").remove();
-    console.log(res)
-    this.setData({
-      upvoted: false,
-      upvote_num: this.data.upvote_num - 1,
-    })
+  async star_post() {
+    var data = {
+      user_id: app.global_data.user_id,
+      post_id: this.data.post_id,
+    }
+    if(this.data.starred){
+      await util.request('/star/del', data).catch(e => {
+        util.hint(e.message);
+        throw e;
+      });
+      this.setData({ 
+        starred: false,
+        star_num: this.data.star_num - 1,
+      });
+    } else {
+      await util.request('/star/add', data).catch(e => {
+        util.hint(e.message);
+        throw e;
+      });
+      this.setData({ 
+        starred: true,
+        star_num: this.data.star_num + 1,
+      });
+    }
+  },
+  async upvote_comment1(e){
+    var idx1 = e.currentTarget.dataset.idx1;
+    var item = e.currentTarget.dataset.item;
+    var data = {
+      user_id: app.global_data.user_id,
+      target_id: item.comment_id,
+      type: 'comment'
+    }
+    if(item.upvoted){
+      await util.request('/upvote/del', data).catch(e => {
+        util.hint(e.message);
+        throw e;
+      });
+      this.setData({
+        [`comment_1[${idx1}].upvoted`]: false,
+        [`comment_1[${idx1}].upvote_num`]: item.upvote_num - 1,
+      });
+    } else {
+      await util.request('/upvote/add', data).catch(e => {
+        util.hint(e.message);
+        throw e;
+      });
+      this.setData({ 
+        [`comment_1[${idx1}].upvoted`]: true,
+        [`comment_1[${idx1}].upvote_num`]: item.upvote_num + 1,
+      });
+    }
+  },
+  async upvote_comment23(e){
+    var idx1 = e.currentTarget.dataset.idx1;
+    var idx2 = e.currentTarget.dataset.idx2;
+    var item = e.currentTarget.dataset.item;
+    var data = {
+      user_id: app.global_data.user_id,
+      target_id: item.comment_id,
+      type: 'comment'
+    }
+    if(item.upvoted){
+      await util.request('/upvote/del', data).catch(e => {
+        util.hint(e.message);
+        throw e;
+      });
+      this.setData({
+        [`comment_1[${idx1}].comment_23[${idx2}].upvoted`]: false,
+        [`comment_1[${idx1}].comment_23[${idx2}].upvote_num`]: item.upvote_num - 1,
+      });
+    } else {
+      await util.request('/upvote/add', data).catch(e => {
+        util.hint(e.message);
+        throw e;
+      });
+      this.setData({ 
+        [`comment_1[${idx1}].comment_23[${idx2}].upvoted`]: true,
+        [`comment_1[${idx1}].comment_23[${idx2}].upvote_num`]: item.upvote_num + 1,
+      });
+    }
+  },
+
+  // 聚焦某评论（翻至顶部）
+  async focus_comment_1(cid) {
+    await this.unfold_1();
+    let ls = this.data.comment_1;
+    for(let i = 0;i < ls.length;i++){
+      if(ls[i].comment_id == cid){
+        var tmp = ls[i];
+        ls[i] = ls[0];
+        ls[0] = tmp;
+        this.setData({
+          comment_1: ls,
+        })
+        break;
+      }
+    }
+    if(this.data.comment_1[0].comment_num > 0){
+      this.unfold_23( {currentTarget: {dataset: {idx: 0}}} );
+    }
   },
 
   // 发送评论
   async send_comment() {
     if(this.data.reply.content.length <= 0){
-      wx.showToast({
-        title: '不能发送空评论！',
-        icon: 'error'
-      })
+      util.hint('不能发送空评论！');
       return
     }
+    wx.showLoading();
     var reply = this.data.reply; // 补全信息
-    reply.post_id = this.data._id;
-    reply.user_id = app.global_data._id;
-    reply.comment_time = new Date();
-    var res = (await db.collection('comment').add({
-      data: reply
-    }).catch(e => {
-      wx.showToast({
-        title: '发送失败！',
-        icon: 'error'
-      });
+    reply.post_id = this.data.post_id;
+    reply.user_id = app.global_data.user_id;
+    // 发送
+    var res = await util.request('/comment/add', reply).catch(e => {
+      util.hint(e.message);
       throw e;
-    }))._id;
+    });
     wx.showToast({
       title: '发送成功',
     });
+
     // 本地更新
     this.setData({
       comment_num: this.data.comment_num + 1
     })
     if(reply.level == 1){
+      // 发送回复消息
+      await util.request('/message/add', {
+        f_user_id: app.global_data.user_id,
+        t_user_id: this.data.user_id,
+        title: `在您的帖子【${this.data.title}】中评论`,
+        content: reply.content,
+        link: `/pages/post/post?pid=${this.data.post_id}&cid=${res.comment_id}`
+      }).catch(e => {
+        util.hint(e.message);
+        throw e;
+      });
       this.unfold_1();
-    } else { // 找到并重新展开
+    } else { 
+      // 发送回复消息
+      await util.request('/message/add', {
+        f_user_id: app.global_data.user_id,
+        t_user_id: reply.reply_id,
+        title: `在帖子【${this.data.title}】中回复了您`,
+        content: reply.content,
+        link: `/pages/post/post?pid=${this.data.post_id}&cid=${reply.father_id}`
+      }).catch(e => {
+        util.hint(e.message);
+        throw e;
+      });
+      
+      // 找到并重新展开
       for(let i = 0;i < this.data.comment_1.length;i++){
-        if(this.data.comment_1[i]._id == reply.father_id){
+        if(this.data.comment_1[i].comment_id == reply.father_id){
           this.setData({
             ["comment_1["+i+"].comment_num"]: this.data.comment_1[i].comment_num + 1,
           })
@@ -206,23 +333,32 @@ Page({
         }
       }
     }
+    this.set_reply_post();
   },
 
   /**
    * 生命周期函数--监听页面加载
-   * options.id: post_id
+   * options: {
+   *  pid(post_id, required)
+   *  cid(comment_id) // 聚焦评论号（定位）
+   * }
    */
   async onLoad(options) {
-    var res = (await wx.cloud.callFunction({
-      name: "get_post",
-      data: {
-        post_id: options.id,
-        user_id: app.global_data._id,
-      }
-    })).result;
+    var res = await util.request('/post/getfull', {
+      user_id: app.global_data.user_id,
+      post_id: options.pid,
+    }).catch(e => {util.hint(e.message)});
     res.post_time = new Date(res.post_time);
     res.time_statement = util.time_statement(res.post_time);
     this.setData(res);
+    await util.request('/post/addread', {
+      user_id: app.global_data.user_id,
+      post_id: options.pid,
+    });
+
+    if(options.cid) { // 定位
+      this.focus_comment_1(options.cid);
+    }
   },
 
   /**

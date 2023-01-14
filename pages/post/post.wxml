@@ -2,13 +2,15 @@
 
 <!-- 页面 -->
 <view class="container" bindtap="fold_1">
-  <view class="head_bar">
+  <view class="title_bar">
     <text class="title"> {{title}} </text>
     <text wx:if="{{tags.length > 0}}" class="tag"> #{{tags}} </text>
   </view>
-  <view class="time_bar">
-      <text class="time"> {{time_statement}} </text>
+  <view class="head_bar">
+    <head_bar user_name="{{user_name}}" user_avatar="{{user_avatar}}" time_statement="{{time_statement}}">
+    </head_bar>
   </view>
+
   <view class="content_bar">
     <text user-select="true" class="content"> {{content}} </text>
   </view>
@@ -21,32 +23,36 @@
 <!-- 底部栏 -->
 <view class="bottom_bar" wx:if="{{fold_comment}}">
   <view class="icon_button">
-    <icon class="iconfont icon-star" wx:if="{{!starred}}"></icon>
-    <icon class="iconfont icon-starred" wx:if="{{starred}}"></icon>
-    <text wx:if="{{star_num > 0}}"> {{star_num}} </text>
+    <icon class="iconfont icon-star" wx:if="{{!starred}}" bindtap="star_post"></icon>
+    <icon class="iconfont icon-starred" wx:if="{{starred}}" bindtap="star_post"></icon>
+    <text class="icontext" wx:if="{{star_num > 0}}"> {{star_num}} </text>
   </view>
   <view class="icon_button">
     <icon class="iconfont icon-like" wx:if="{{!upvoted}}" bindtap="upvote_post"></icon>
-    <icon class="iconfont icon-liked" wx:if="{{upvoted}}" bindtap="de_upvote_post"></icon>
-    <text wx:if="{{upvote_num > 0}}"> {{upvote_num}} </text>
+    <icon class="iconfont icon-liked" wx:if="{{upvoted}}" bindtap="upvote_post"></icon>
+    <text class="icontext" wx:if="{{upvote_num > 0}}"> {{upvote_num}} </text>
   </view>
   <view class="icon_button" catchtap="unfold_1">
     <icon class="iconfont icon-comment"></icon>
-    <text wx:if="{{comment_num > 0}}"> {{comment_num}} </text>
+    <text class="icontext" wx:if="{{comment_num > 0}}"> {{comment_num}} </text>
   </view>
 </view>
 
 <!-- 评论区展开 -->
 <view class="fold_area" wx:if="{{!fold_comment}}">
-  <view class="fold_button" bindtap="fold_1"><text style="color: black;">v 收起评论区 v</text></view>
+  <view class="top_l" bindtap="fold_1">
+    <text class="fold">v 收起评论区 v</text>
+    <view class="method_button" catchtap="switch_method">
+      <text style="color: var(--main-color);" wx:if="{{method=='fever'}}">按热度</text>
+      <text style="color: var(--main-color);" wx:if="{{method=='time'}}">按时间</text>
+    </view>
+  </view>
   <scroll-view scroll-y="true" class="comment_area">
     <view class="comment" wx:for="{{comment_1}}">
       <view class="head_bar">
-        <image class="avatar" mode="aspectFill" src="{{item.user.avatar}}"></image>
-        <view class="head-r">
-          <text class="user_name">{{item.user.name}}</text>
-          <text class="time">{{item.time_statement}}</text>
-        </view>
+        <head_bar user_name="{{item.user_name}}" user_avatar="{{item.user_avatar}}"
+         time_statement="{{item.time_statement}}">
+        </head_bar>
       </view>
       <view class="content_bar">
         <text class="content" user-select="true">{{item.content}}</text>
@@ -62,27 +68,28 @@
         </view>
         <view wx:if="{{item.comment_num<=0}}"></view>
         <view class="icon_bar">
-          <view class="icon">
+          <view class="icon" bindtap="upvote_comment1" data-item="{{item}}" data-idx1="{{index}}">
             <icon class="iconfont icon-like" wx:if="{{!item.upvoted}}"></icon>
             <icon class="iconfont icon-liked" wx:if="{{item.upvoted}}"></icon>
-            <text wx:if="{{item.upvote_num > 0}}"> {{item.upvote_num}} </text>
+            <text class="icontext" wx:if="{{item.upvote_num > 0}}"> {{item.upvote_num}} </text>
           </view>
           <view class="icon">
             <icon class="iconfont icon-comment" bindtap="set_reply"
-               data-target="{{item}}" data-fid="{{item._id}}"></icon>
+               data-target="{{item}}" data-fid="{{item.comment_id}}"></icon>
           </view>
         </view>
       </view>
 
       <view class="comment_23" wx:if="{{!item.fold_comment}}"
-       wx:for-item="item23" wx:for="{{item.comment_23}}">
+       wx:for-item="item23" wx:for-index="index23" wx:for="{{item.comment_23}}">
         <view class="head_bar">
-          <image class="avatar" mode="aspectFill" src="{{item23.user.avatar}}"></image>
-          <view class="head-r">
-            <text class="user_name" wx:if="{{item23.level==2}}">{{item23.user.name}}</text>
-            <text class="user_name" wx:if="{{item23.level==3}}">{{item23.user.name}} > {{item23.reply_user.name}}</text>
-            <text class="time">{{item23.time_statement}}</text>
-          </view>
+          <head_bar user_name="{{item23.user_name}}" user_avatar="{{item23.user_avatar}}"
+           time_statement="{{item23.time_statement}}" wx:if="{{item23.level==2}}">
+          </head_bar>
+          <head_bar user_name="{{item23.user_name}} > {{item23.reply_user_name}}"
+           user_avatar="{{item23.user_avatar}}"
+           time_statement="{{item23.time_statement}}" wx:if="{{item23.level==3}}">
+          </head_bar>
         </view>
         <view class="content_bar">
           <text class="content" user-select="true">{{item23.content}}</text>
@@ -90,20 +97,21 @@
         <view class="info_bar">
           <view></view>
           <view class="icon_bar">
-            <view class="icon">
+            <view class="icon" bindtap="upvote_comment23"
+             data-item="{{item23}}" data-idx1="{{index}}" data-idx2="{{index23}}">
               <icon class="iconfont icon-like" wx:if="{{!item23.upvoted}}"></icon>
               <icon class="iconfont icon-liked" wx:if="{{item23.upvoted}}"></icon>
-              <text wx:if="{{item23.upvote_num > 0}}"> {{item23.upvote_num}} </text>
+              <text class="icontext" wx:if="{{item23.upvote_num > 0}}"> {{item23.upvote_num}} </text>
             </view>
             <view class="icon">
               <icon class="iconfont icon-comment" bindtap="set_reply"
-               data-target="{{item23}}" data-fid="{{item._id}}"></icon>
+               data-target="{{item23}}" data-fid="{{item.comment_id}}"></icon>
             </view>
           </view>
         </view>
       </view>
     </view>
-    <view class="empty_hint"><text>---到底了---</text></view>
+    <view class="empty_hint"><text style="color: var(--main-color);">---到底了---</text></view>
   </scroll-view> 
 
   <view class="reply_area"> 

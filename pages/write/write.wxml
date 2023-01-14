@@ -1,7 +1,7 @@
 <!--pages/write/write.wxml-->
 <addtag wx:if="{{show_tag_dialog}}" bind:get_tag="add_tag"></addtag>
 <view class="container">
-    <view class="write_head">
+  <view class="pagetitle">
     <text> W </text>
     <text> r </text>
     <text> i </text>
@@ -9,19 +9,19 @@
     <text> e </text>
   </view>
   <view class="title_area">
-    <input class="text" value="{{title}}" bindinput="input_title" maxlength="30" auto-focus placeholder="标题"/>
+    <input value="{{title}}" bindinput="input_title" maxlength="64" auto-focus placeholder="标题"/>
   </view>
   <view class="content_area">
     <view class="content">
-      <textarea class="text" bindinput="input_content" maxlength="100000" auto-focus placeholder="内容"/>
+      <textarea auto-height="true" bindinput="input_content" maxlength="300000" auto-focus placeholder="内容"/>
     </view>
     <view class="image_area">
       <view class="image" wx:for="{{imgs}}">
         <image mode="aspectFill" src="{{item.path}}" data-src="{{item.path}}" bindtap="preview_image"></image>
         <icon class="iconfont icon-delete" data-src="{{item.path}}" bindtap="del_image"></icon>
       </view>
-      <view>
-        <button bindtap="add_image"> + </button>
+      <view class="addbutton" bindtap="add_image">
+        <text>+</text>
       </view>
     </view>
   </view>
@@ -31,15 +31,11 @@
       <text> x </text>
     </view>
     <view class="tag" bindtap="choose_tag">
-      <text style="color: rgb(138, 138, 138);"> #添加tag... </text>
+      <text style="color: var(--main-color);"> #添加tag... </text>
     </view>
   </view>
   
-  <view class="submit_button" bindtap="submit" wx:if="{{submitable}}">
-    <text> 发布</text>
+  <view class="submit_button" bindtap="submit">
+    <text style="font-weight: bold;"> 发布</text>
   </view>
-  <view class="submit_button" wx:if="{{!submitable}}">
-    <text> 访客状态下不能发贴！</text>
-  </view>
-
 </view>

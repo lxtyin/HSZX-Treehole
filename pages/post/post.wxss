@@ -6,26 +6,24 @@
   justify-content: center;
 }
 
-.container .head_bar, .content_bar, .time_bar {
+.title_bar,.content_bar,.head_bar {
   margin-left: 5%;
   margin-right: 5%;
   margin-top: 1em;
 }
+
 .container .title {
-  font-weight: bold;
   font-size: 18px;
 }
 .container .tag {
-  color: rgba(255, 255, 169, 0.692);
+  color: var(--main-color);
   font-weight: bold;
   text-align: center;
   font-size: 18px;
 }
 .container .content {
   width: 100%;
-  font-size: 14px;
   text-align: left;
-  color: rgb(228, 228, 228);
   word-break: break-all;
 }
 
@@ -51,63 +49,82 @@
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  background-color: rgb(63, 70, 139);
+  border-top: solid;
+  border-color: var(--main-color);
+  background-color: var(--back3-color);
+}
+.bottom_bar .iconfont {
+  font-size: 24px;
+}
+.bottom_bar .icontext {
+  font-size: 20px;
 }
 
 .fold_area {
   position: fixed;
-  bottom: 0%;
   width: 100%;
+  bottom: 0px;
   z-index: 10;
+  background-color: var(--back3-color);
+  display: flex;
+  flex-direction: column;
 }
 
-.fold_area .fold_button {
-  background-color: aliceblue;
+.fold_area .top_l {
+  position: relative;
+  background-color: var(--main2-color);
   display: flex;
   justify-content: center;
 }
+.fold_area .top_l .fold {
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+}
+.fold_area .method_button {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  
+  background-color: var(--back-color);
+  border-radius: 5px;
+}
+.fold_area .method_button text {
+  margin: 10px;
+}
 
 .comment_area {
-  background-color: rgb(63, 70, 139);
+  position: relative;
+  height: 70vh;
   display: flex;
   flex-direction: column;
-  height: 350px;
   justify-content: center;
 }
 .comment, .comment_23 {
   border-radius: 5px;
-  background-color: rgb(44, 44, 44);
+  background-color: var(--back-color);
   margin: 8px;
   margin-bottom: 0px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
-.comment .head_bar {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-end;
-  margin: 5px;
-}
-.comment .head_bar .head-r {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-left: 3px;
+
+.comment_area .head_bar {
+  margin: 3%;
+  margin-bottom: 0px;
 }
 .comment .content_bar {
-  margin: 5px;
-  margin-left: 15px;
-  margin-top: 0px;
+  margin: 3%;
+  margin-left: 5%;
+  margin-bottom: 0px;
 }
 .comment .info_bar {
-  margin: 10px;
-  margin-top: 0px;
+  margin: 3%;
+  margin-left: 5%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
 }
 .comment .icon_bar {
   display: flex;
@@ -117,18 +134,14 @@
 .comment .com23_button text {
   font-size: 14px;
   font-weight: bold;
-  color: rgb(142, 142, 255);
+  color: var(--main3-color);
 }
 .comment .icon{
   margin-right: 8px;
 }
-.comment .icon .iconfont, text {
-  font-size: 16px;
-  color: rgb(190, 190, 190);
-}
 
 .comment_23 {
-  background-color: rgb(58, 58, 58);
+  background-color: var(--back2-color);
   margin-left: 20px;
   margin-right: 0px;
 }
@@ -143,24 +156,25 @@
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  background-color: rgb(194, 194, 194);
+  background-color: var(--back-color);
 }
 .reply_area .input {
   margin: 5px;
   border: solid;
   width: 80%;
-  border-color: black;
+  border-color: var(--main-color);
   border-radius: 10px;
 }
 .reply_area textarea {
   max-height: 6.3em;
   margin: 4px;
   width: 95%;
+  color: var(--text-color);
 }
 .reply_area .send_button {
   margin: 5px;
   width: 20%;
-  background-color: blue;
+  background-color: var(--main-color);
   border-radius: 10px;
   display: flex;
   flex-direction: column;

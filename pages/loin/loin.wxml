@@ -1,17 +1,32 @@
 <!--pages/loin.wxml-->
 
-<view class="title">
-  <text> L </text>
-  <text> o </text>
+<view class="pagetitle">
+  <text> s </text>
   <text> i </text>
+  <text> g </text>
   <text> n </text>
 </view>
 <text class="hint">
-使用学生邮箱(.edu.cn)验证登录
+欢迎xxxxx
+（欢迎词）
+这是一个匿名平台
+
+你可以使用微信登录
+这将产生一个新的匿名账号，与您的微信绑定
+我们确保您的微信不会泄露
+
 或以访客身份浏览
-（发言不会和学号挂钩哦！）
 </text>
 
+<view class="line" id="button" bindtap="login_by_wx">
+  <text class="button_text" style="color: var(--main2-color);">微信登录</text>
+</view>
+<view class="line" id="button" bindtap="visit">
+  <text class="button_text" style="color: var(--main2-color);">访客进入</text>
+</view>
+
+<!-- 
+邮箱登录
 <input class="line" value="{{title}}" bindinput="input_email" maxlength="30" auto-focus placeholder="邮箱"/>
 
 <view class="line" id="button" bindtap="send" wx:if="{{!sended}}">
@@ -22,10 +37,12 @@
 </view>
 
 <input class="line" wx:if="{{sended}}" value="{{title}}" bindinput="input_code" maxlength="30" auto-focus placeholder="验证码"/>
-<view class="line" id="button" wx:if="{{sended}}" bindtap="loin">
-  <text class="button_text">进入</text>
+<view class="line" id="button" wx:if="{{sended}}" bindtap="login_by_code">
+  <text class="button_text" style="color: var(--main2-color);">进入</text>
 </view>
 
 <view class="line" id="visit" bindtap="visit">
-  <text class="button_text">访客进入</text>
+  <text class="button_text" style="color: var(--main2-color);">访客进入</text>
 </view>
+-->
+

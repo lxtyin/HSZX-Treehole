@@ -2,7 +2,6 @@
 
 const app = getApp();
 const util = require("../../utils/util")
-const db = wx.cloud.database()
 
 Page({
   /**
@@ -14,8 +13,7 @@ Page({
     imgs: [], // {path: , is_tmp: }
     tags: [],
 
-    show_tag_dialog: false,
-    submitable: true
+    show_tag_dialog: false
   },
 
   input_title(e) {
@@ -119,28 +117,20 @@ Page({
       })
       return;
     }
-
     await this.upload_imgs();
     wx.showLoading({ title: '正在发布..', })
     var img_paths = [];
     for (let i = 0; i < this.data.imgs.length; i++) img_paths.push(this.data.imgs[i].path);
-    await db.collection("post").add({
-      data: {
-        user_id: app.global_data._id,
-        title: this.data.title,
-        post_time: new Date(),
-        content: this.data.content,
-        imgs: img_paths,
-        tags: this.data.tags,
-      }
+    await util.request('/post/add', {
+      user_id: app.global_data.user_id,
+      title: this.data.title,
+      content: this.data.content,
+      imgs: img_paths,
+      tags: this.data.tags,
     }).catch(e => {
-      wx.showToast({
-        title: '发布失败',
-        icon: 'error'
-      });
+      util.hint("发布失败");
       throw e;
     })
-
     wx.showToast({ title: '发布成功' });
     setTimeout(() => {
       this.setData({
@@ -164,10 +154,7 @@ Page({
       if (res[i].is_tmp) {
         res[i].is_tmp = false;
         var r = await util.upload_file(res[i].path).catch(e => {
-          wx.showToast({
-            title: '图片上传失败！',
-            icon: 'error'
-          })
+          util.hint('图片上传失败！')
           throw e;
         });
         res[i].path = r;
@@ -183,11 +170,6 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    if (app.global_data.user_id == "visit") {
-      this.setData({
-        submitable: false
-      })
-    }
   },
 
   /**
@@ -201,7 +183,9 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
-
+    if(app.global_data.user_id == 'visit'){
+      util.hint("现在是访客状态！");
+    }
   },
 
   /**

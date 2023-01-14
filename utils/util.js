@@ -1,7 +1,7 @@
 
 const app = getApp();
-const db = wx.cloud.database();
-const _ = db.command;
+// const server_url = "http://localhost:7788"
+const server_url = "https://lxtyin.ac.cn:7788"
 
 /**
  * 将Date类型转为一个描述（'刚刚', '1小时前'等)
@@ -19,38 +19,93 @@ function time_statement(date) {
   } else if (nd.getFullYear() == date.getFullYear()){
       return (date.getMonth() + 1) + '-' + date.getDate();
   } else {
-    return date.getFullYear() + (date.getMonth() + 1) + '-' + date.getDate();
+    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
   }
 }
 
 /**
- * 上传文件
+ * 检查消息量，进行红点提示
  */
-function randname() {
-  let str = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let randomStr = '';
-  for (let i = 17; i > 0; --i) {
-    randomStr += str[Math.floor(Math.random() * str.length)];
-  }
-  var date = new Date();
-  return randomStr + (date.getMonth() + 1) + '-' + date.getDate();
-}
-
-/**
- * 上传文件
- * @param path 临时文件路径
- * @returns fileID
- */
-async function upload_file(path) {
-  wx.showLoading()
-  let suffix = /\.\w+$/.exec(path)[0];
-  var res = await wx.cloud.uploadFile({
-    cloudPath: "hszxhole-photos/" + randname() + suffix,
-    filePath: path,
+async function refresh_message() {
+  var res = await request('/message/urnum', {
+    user_id: app.global_data.user_id
   });
-  wx.hideLoading();
-  return res.fileID;
+  if(res.count == 0){
+    wx.removeTabBarBadge({
+      index: 2,
+    });
+  } else {
+    wx.setTabBarBadge({
+      index: 2,
+      text: `${res.count}`
+    });
+  }
+}
+
+/**
+ * 给出提示
+ * @param {*} msg 
+ */
+function hint(msg) {
+  // 暂定
+  wx.showToast({
+    title: msg,
+    icon: 'error'
+  })
+}
+
+/**
+ * 上传文件
+ * @param tmppath 临时文件路径
+ * @returns 永久文件路径
+ */
+async function upload_file(tmppath) {
+  return new Promise((resolve, reject) => {
+    wx.uploadFile({
+      filePath: tmppath,
+      name: 'file',
+      url: server_url + '/upload',
+      success(res) {
+        if(res.statusCode == 200) {
+          resolve(res.data);
+        } else {
+          reject(new Error(res.data));
+        }
+      },
+      fail: e => { reject(e) }
+    })
+  })
+}
+
+/**
+ * 执行post请求，传递json格式数据
+ * @param {*} way url, start with /
+ * @param {*} data json data
+ * @returns {*} 返回json格式数据，若错误则返回err
+ */
+function request(way, data){
+  if(!data.secret_id) data.secret_id = app.global_data.secret_id;
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: server_url + way,
+      data: data,
+      method: 'POST',
+      success(res) {
+        if(res.statusCode == 200){
+          resolve(res.data);
+        } else if(res.statusCode == 500) {
+          reject(new Error("服务端错误"));
+        } else {
+          reject(new Error(res.data));
+        }
+      },
+      fail: e => { reject(e) }
+    })
+  })
 }
 
 module.exports.time_statement = time_statement
 module.exports.upload_file = upload_file
+module.exports.refresh_message = refresh_message;
+module.exports.request = request
+module.exports.hint = hint;

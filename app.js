@@ -1,24 +1,13 @@
 
 App({
+  // global_data存用户信息
   global_data: {
-    // 相当于user表中一条记录
-    _id: "visit",
+    secret_id: "visit",
+    user_id: "visit",
     avatar: "../../img/mine.png",
+    authority: 5, // 权限 0封禁 5普通 10管理员
     name: "访客",
   },
   onLaunch(){
-    wx.cloud.init();
-    const l = wx.getStorageSync('loin')
-    var that = this;
-    if(l.user_id){
-      wx.cloud.database().collection("user").doc(l.user_id).get({
-        success(res) {
-          that.global_data = res.data;
-          wx.switchTab({
-            url: '/pages/hole/hole',
-          })
-        }
-      });
-    }
   }
 })

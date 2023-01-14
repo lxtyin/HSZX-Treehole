@@ -1,8 +1,7 @@
 // pages/loin.js
 
 const app = getApp();
-const md5 = require("../../utils/md5.js")
-const db = wx.cloud.database();
+const util = require("../../utils/util");
 
 Page({
 
@@ -12,7 +11,6 @@ Page({
   data: {
     email: "",
     code: "",
-    t_code: "",
     sended: false
   },
   that: this,
@@ -27,7 +25,7 @@ Page({
       code: e.detail.value
     })
   },
-  send() {
+  async send() {
     // var pat = /\.edu\.cn$/
     // if(!this.data.email.match(pat)){
     //   wx.showToast({
@@ -41,73 +39,73 @@ Page({
     wx.showLoading({
       title: '正在发送',
     })
-    var t_code = Math.round(Math.random() * 900000 + 100000).toString();
-    wx.cloud.callFunction({
-      name: "send_email",
-      data: {
-        email: this.data.email,
-        subject: 'Hszx Hole 验证码',
-        content: "【HSZX-HOLE】您的验证码为：" + t_code
-      },
-      success(res) {
-        wx.showToast({
-          title: '发送成功',
-        })
-        that.setData({
-          sended: true,
-          t_code: md5.hexMD5(t_code)
-        })
-      },
-      fail() {
-        wx.showToast({
-          title: '发送失败',
-          icon: 'error'
-        })
-      },
-      complete: () => wx.hideLoading()
+    await util.request('/loin/send', {
+      email: this.data.email,
+    }).catch(e => {
+      util.hint('发送失败！');
+      throw e;
+    });
+    wx.showToast({
+      title: '发送成功',
+    })
+    that.setData({
+      sended: true
     })
   },
-  async loin() {
-    if(md5.hexMD5(this.data.code) == this.data.t_code) {
-      wx.showLoading()
-      var id = md5.hexMD5(this.data.email);
-      var res = await db.collection("user").where({
-        _id: id
-      }).get();
-      if(res.data.length <= 0){
-        wx.showLoading({
-          title: '正在创建用户',
-        })
-        res = {
-          _id: id,
-          avatar: "../../img/mine.png",
-          name: "默认马甲",
-          confirm_time: new Date()
-        }
-        await db.collection("user").add({ data: res })
-      } else res = res.data[0];
-      wx.hideLoading();
-      wx.setStorageSync('loin', {user_id: res._id});
-      app.global_data = res;
-      wx.showToast({
-        title: '登录成功',
-        duration: 1000
+  // 使用邮箱验证码登录
+  async login_by_code() {
+    wx.showLoading()
+    var res = await util.request("/loin/bycode", {
+      email: this.data.email,
+      code: this.data.code,
+    }).catch(e => {
+      util.hint(e.message);
+      throw e;
+    })
+    wx.hideLoading();
+    wx.setStorageSync('loin', {secret_id: res.secret_id});
+    app.global_data = res;
+    wx.showToast({
+      title: '登录成功',
+      duration: 1000
+    })
+    setTimeout(() => {
+      wx.switchTab({
+        url: '/pages/hole/hole',
       })
-      setTimeout(() => {
-        wx.switchTab({
-          url: '/pages/hole/hole',
-        })
-      }, 1000);
-    } else {
-      wx.showToast({
-        title: '验证码不对！',
-        icon: 'error'
-      })
-    }
+    }, 1000);
   },
+
+  // 使用微信登录
+  async login_by_wx() {
+    wx.login({
+      async success(ress) {
+        var res = await util.request('/loin/bywx', {
+          wxcode: ress.code,
+        }).catch(e => {
+          util.hint(e.message);
+          throw e;
+        })
+        wx.hideLoading();
+        wx.setStorageSync('loin', {secret_id: res.secret_id});
+        app.global_data = res;
+        wx.showToast({
+          title: '登录成功',
+          duration: 1000
+        })
+        setTimeout(() => {
+          wx.switchTab({
+            url: '/pages/hole/hole',
+          })
+        }, 1000);
+      }
+    })
+  },
+
   visit() {
     app.global_data = {
-      _id: "visit",
+      user_id: "visit",
+      secret_id: "visit",
       avatar: "../../img/mine.png",
       name: "访客",
     }
@@ -119,7 +117,19 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad(options) {
+  async onLoad(options) {
+    if(options.switch) return; // 切换账号时使用
+    // 使用缓冲secret_id登录
+    let l = wx.getStorageSync('loin')
+    if(l.secret_id){
+      var res = await util.request('/loin/bysid', {
+        secret_id: l.secret_id,
+      });
+      app.global_data = res;
+      wx.switchTab({
+        url: '/pages/hole/hole',
+      })
+    }
   },
 
   /**
@@ -132,7 +142,7 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
-    wx.hideHomeButton();
+
   },
 
   /**
@@ -145,8 +155,7 @@ Page({
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload() {
-
+  async onUnload() {
   },
 
   /**

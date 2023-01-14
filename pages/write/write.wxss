@@ -8,11 +8,8 @@
   align-items: center
 }
 
-.write_head text {
+.pagetitle text {
   font-size: 40pt;
-  text-shadow: 0px 0px 11px rgb(255, 255, 255);
-  font-family: "Comic Sans MS", cursive, sans-serif;
-  color: rgba(255, 254, 199, 0.658);
 }
 
 .title_area, .content_area, .tag_area, .submit_button {
@@ -20,7 +17,7 @@
   display: flex;
   margin-top: 10px;
   border-radius: 3px;
-  background-color: rgb(80, 80, 80);
+  background-color: var(--back3-color);
 }
 
 .content_area {
@@ -33,36 +30,47 @@
 }
 .content_area textarea {
   width: 100%;
-}
-
-.text {
-  width: 100%;
+  min-height: 30vh;
   margin:10px;
   font-size: 15px;
-  text-align: left;
-  color: rgb(255, 255, 255);
+  color: var(--text-color);
 }
-.title_area .text {
+
+.title_area input {
   font-weight: bold;
+  width: 100%;
+  color: var(--text-bright-color);
 }
 
 .image_area, .tag_area {
   display: flex;
   flex-wrap: wrap;
 }
-.image_area image,button {
+.image_area image, .addbutton {
   width: 50px;
   height: 50px;
+  border: solid var(--main2-color);
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+.image_area .addbutton text {
+  font-size: 30px;
+  color: var(--main-color);
+}
+
 .image_area view {
   margin-bottom: 8px;
   margin-left: 8px;
   position: relative;
 }
 .image_area icon {
+  color: var(--main4-color);
   font-size: 20px;
   position: absolute;
-  top: -3px;
+  top: -4px;
   right: 0px;
 }
 
@@ -71,7 +79,7 @@
   justify-content: flex-start;
 }
 .tag {
-  background-color: rgb(77, 94, 153);
+  border: solid var(--main2-color);
   border-radius: 15px;
   margin: 5px;
   display: flex;
@@ -81,7 +89,7 @@
 .tag text, input {
   margin: 7px;
   font-size: 14px;
-  color: rgb(255, 235, 144);
+  color: var(--main-color);
   font-weight: bold;
 }
 
@@ -92,12 +100,12 @@
 }
 
 .submit_button {
-  background-color: antiquewhite;
+  background-color: var(--main-color);
   display: flex;
   flex-direction: row;
   justify-content: center;
 }
 .submit_button text {
-  margin: 3px;
-  color: rgb(14, 34, 34);
+  margin: 10px;
+  color: var(--back-color);
 }
