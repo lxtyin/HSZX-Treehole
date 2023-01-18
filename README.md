@@ -1,2 +1,2 @@
 # HSZX-Treehole
-A treehole project for hszx use miniprogram and could development.
+A treehole project for hszx use miniprogram and nodejs server.
